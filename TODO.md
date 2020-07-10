@@ -4,8 +4,8 @@
 
 ## Milestones
 1. Parse pallet
- - [ ] create file format
- - [ ] parse that format
+ - [x] create file format
+ - [x] parse that format
  - [ ] print out all pallets
 2. Apply Rice
  - [ ] create template convention
