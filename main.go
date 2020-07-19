@@ -1,10 +1,7 @@
 package main
 
 import (
-	"text/template"
 	"os"
-	"io"
-	"io/ioutil"
 	"strings"
 	"github.com/xen0ne/ricemgr/color"
 )
