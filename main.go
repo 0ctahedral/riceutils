@@ -3,18 +3,19 @@ package main
 import (
 	"os"
 	"strings"
-	"github.com/xen0ne/ricemgr/color"
+	"github.com/xen0ne/riceutils/color"
+	"github.com/xen0ne/riceutils/temp"
 )
 
 
 
 func main() {
-	const temp = "my fave color is {{hex .Primary }}\nmy second fave color is {{hex .Secondary }}\n"
+	const t = "my fave color is {{hex .bg }}\nmy second fave color is {{rgb .fg }}\n"
 
-	simp := color.Pallet{color.Color{0, 0xff, 0}, color.Color{0, 0, 0xff}}
+	//simp := color.CleanPallet()
 
-	err := color.ApplyPallet(strings.NewReader(temp), simp, os.Stdout)
-	if err != nil {
-		panic(err)
-	}
+	err := temp.ApplyPallet(strings.NewReader(t), color.CleanPallet(), os.Stdout)
+	if err != nil { println(err) }
+
+	//fmt.Printf("%s", color.Escape(simp.Primary, "11;"))
 }

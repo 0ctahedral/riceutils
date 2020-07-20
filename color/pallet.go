@@ -1,35 +1,24 @@
 package color
+
 import (
-	"text/template"
-	"io/ioutil"
-	"io"
 )
 
-type Pallet struct {
-	 Primary Color
-	 Secondary Color
-}
+// A Pallet is a map of string color names to Colors
+type Pallet map[string]*Color
 
-// ApplyPallet reads a template from a reader, applies the given pallet to it
-// and then writes the filled in template to the writer
-func ApplyPallet(r io.Reader, p Pallet, w io.Writer) error {
-
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		return err
+// CleanPallet fills a pallet with white values
+func CleanPallet() Pallet {
+	return Pallet{
+		"bg":		&Color{255, 255, 255},
+		"bg_alt":	&Color{255, 255, 255},
+		"fg":		&Color{255, 255, 255},
+		"fg_alt":	&Color{255, 255, 255},
+		"pri":		&Color{255, 255, 255},
+		"sec":		&Color{255, 255, 255},
+		"alet":		&Color{255, 255, 255},
+		"cur":		&Color{255, 255, 255},
+		"fill1":	&Color{255, 255, 255},
+		"fill2":	&Color{255, 255, 255},
+		"fill3":	&Color{255, 255, 255},
 	}
-
-	funcs := template.FuncMap{
-		"hex": ToHex,
-		"rgb": ToRgb,
-	}
-
-	tmpl := template.Must(template.New("test").Funcs(funcs).Parse(string(b)))
-
-	err = tmpl.Execute(w, p)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
