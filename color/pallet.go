@@ -11,7 +11,7 @@ func CleanPallet() Pallet {
 	return Pallet{
 		"bg":		&Color{255, 255, 255},
 		"bg_alt":	&Color{255, 255, 255},
-		"fg":		&Color{255, 255, 255},
+		"fg":		NewColor("#7dced4"),
 		"fg_alt":	&Color{255, 255, 255},
 		"pri":		&Color{255, 255, 255},
 		"sec":		&Color{255, 255, 255},

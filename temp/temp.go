@@ -18,8 +18,10 @@ func ApplyPallet(r io.Reader, p color.Pallet, w io.Writer) error {
 	}
 
 	funcs := template.FuncMap{
-		"hex": color.Hex,
-		"rgb": color.Rgb,
+		"hex": color.HexString,
+		"rgb": color.RgbString,
+		"rgb225": color.RgbString225,
+		"hsv": color.HsvString,
 	}
 
 	tmpl := template.Must(template.New("test").Funcs(funcs).Parse(string(b)))
