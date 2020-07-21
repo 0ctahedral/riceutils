@@ -4,18 +4,10 @@ package color
 
 import (
 	"fmt"
-	"os"
 	"math"
 	"strconv"
 )
 
-// the escape codes needed for terminal stuff
-const (
-	tesc = "\033Ptmux;\033\033]"
-	tcesc ="\007\033\\"
-	esc = "\033]"
-	cesc = "\007"
-)
 
 // A 256 RGB representation of a color
 type Color struct {
@@ -127,58 +119,4 @@ func NewColor(cstr string) *Color {
 	}
 	return &Color{clr[0], clr[1], clr[2]}
 }
-/*
-    [ -n "$TMUX" ] && {
 
-        $1 == "bg" {
-            printf "%s11;%s%s\n", esc, $2, cesc
-            printf "%s4;0;%s%s\n", esc, $2, cesc
-        }
-        $1 == "bg_alt" {
-            printf "%s;8;%s%s\n", esc, $2, cesc
-        }
-        $1 == "primay" {
-            printf "%s4;1;%s%s\n", esc, $2, cesc
-            printf "%s4;9;%s%s\n", esc, $2, cesc
-        }
-        $1 == "secondary" {
-            printf "%s4;2;%s%s\n", esc, $2, cesc
-            printf "%s4;10;%s%s\n", esc, $2, cesc
-        }
-        $1 == "alert" {
-            printf "%s4;3;%s%s\n", esc, $2, cesc
-            printf "%s4;11;%s%s\n", esc, $2, cesc
-        }
-        $1 == "cursor" {
-            printf "%s4;4;%s%s\n", esc, $2, cesc
-            printf "%s4;12;%s%s\n", esc, $2, cesc
-            printf "%s12;%s%s\n", esc, $2, cesc
-        }
-        $1 == "fill" {
-            printf "%s4;5;%s%s\n", esc, $2, cesc
-            printf "%s4;6;%s%s\n", esc, $2, cesc
-            printf "%s4;13;%s%s\n", esc, $2, cesc
-            printf "%s4;14;%s%s\n", esc, $2, cesc
-        }
-        $1 == "fg" {
-            printf "%s10;%s%s\n", esc, $2, cesc
-            printf "%s4;7;%s%s\n",esc,  $2, cesc
-        }
-        $1 == "fg_alt" {
-            printf "%s17;%s%s\n", esc, $2, cesc
-            printf "%s4;15;%s%s\n", esc, $2, cesc
-        }
-*/
-
-// Escape returns the full escape code to change a terminal's property given
-// by p to the color given by c
-func Escape(c *Color, p string) string {
-	oe := esc
-	ce := cesc
-	// if tmux variable is set then we need extra escape codes
-	if os.Getenv("TMUX") != "" {
-		oe = tesc
-		ce = tcesc
-	}
-    return fmt.Sprintf("%s%s%s%s\n", oe, p, HexString(c), ce)
-}
