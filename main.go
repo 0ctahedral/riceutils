@@ -17,7 +17,7 @@ my fave color in rbg {{rgb225 .fg }}
 my fave color in rbg {{rgb .fg }}
 my fave color in hsv {{hsv .fg }}`
 
-	simp := color.CleanPallet()
+	simp := color.DefaultPallet()
 
 	// err := temp.ApplyPallet(strings.NewReader(t),
 	// 	simp, os.Stdout)

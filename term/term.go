@@ -29,56 +29,6 @@ var Stdmap = map[string][]string {
 	"fg_alt": {"17;", "4;15;"},
 }
 
-/*
-    [ -n "$TMUX" ] && {
-
-        $1 == "bg" {
-            printf "%s11;%s%s\n", esc, $2, cesc
-}
-
-/*
-    [ -n "$TMUX" ] && {
-
-        $1 == "bg" {
-            printf "%s11;%s%s\n", esc, $2, cesc
-            printf "%s4;0;%s%s\n", esc, $2, cesc
-        }
-        $1 == "bg_alt" {
-            printf "%s;8;%s%s\n", esc, $2, cesc
-        }
-        $1 == "primay" {
-            printf "%s4;1;%s%s\n", esc, $2, cesc
-            printf "%s4;9;%s%s\n", esc, $2, cesc
-        }
-        $1 == "secondary" {
-            printf "%s4;2;%s%s\n", esc, $2, cesc
-            printf "%s4;10;%s%s\n", esc, $2, cesc
-        }
-        $1 == "alert" {
-            printf "%s4;3;%s%s\n", esc, $2, cesc
-            printf "%s4;11;%s%s\n", esc, $2, cesc
-        }
-        $1 == "cursor" {
-            printf "%s4;4;%s%s\n", esc, $2, cesc
-            printf "%s4;12;%s%s\n", esc, $2, cesc
-            printf "%s12;%s%s\n", esc, $2, cesc
-        }
-        $1 == "fill" {
-            printf "%s4;5;%s%s\n", esc, $2, cesc
-            printf "%s4;6;%s%s\n", esc, $2, cesc
-            printf "%s4;13;%s%s\n", esc, $2, cesc
-            printf "%s4;14;%s%s\n", esc, $2, cesc
-        }
-        $1 == "fg" {
-            printf "%s10;%s%s\n", esc, $2, cesc
-            printf "%s4;7;%s%s\n",esc,  $2, cesc
-        }
-        $1 == "fg_alt" {
-            printf "%s17;%s%s\n", esc, $2, cesc
-            printf "%s4;15;%s%s\n", esc, $2, cesc
-        }
-*/
-
 // EscColor returns the full escape code to change a terminal's property given
 // by p to the color given by c
 func EscColor(c *color.Color, p string) string {
@@ -97,8 +47,6 @@ func EscColor(c *color.Color, p string) string {
 func EscPallet(p *color.Pallet, m map[string][]string) string {
 	var ret string
 	for k, c := range p.Iter() {
-		fmt.Println(k)
-		fmt.Println(color.HexString(c))
 		if escs, ok := m[k]; ok {
 			for _, e := range escs {
 				ret += EscColor(c, e)
@@ -106,6 +54,7 @@ func EscPallet(p *color.Pallet, m map[string][]string) string {
 		}
 	}
 
+	ret += "\033[H"
 	return ret
 }
 

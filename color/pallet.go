@@ -36,15 +36,31 @@ func (p *Pallet) Iter() map[string]*Color {
 // CleanPallet fills a pallet with white values
 func CleanPallet() *Pallet {
 	return &Pallet{
-		bg:		&Color{255, 255, 255},
-		bg_alt:	&Color{255, 255, 255},
-		pri:	&Color{255, 255, 255},
-		sec:	&Color{255, 255, 255},
-		alert:	&Color{255, 255, 255},
-		cur:	&Color{255, 255, 255},
-		fill1:	&Color{255, 255, 255},
-		fill2:	&Color{255, 255, 255},
-		fg:		NewColor("#00ff00"),
-		fg_alt:	&Color{255, 255, 255},
+		bg:		NewColor("#ffffff"),
+		bg_alt:	NewColor("#ffffff"),
+		pri:	NewColor("#ffffff"),
+		sec:	NewColor("#ffffff"),
+		alert:	NewColor("#ffffff"),
+		cur:	NewColor("#ffffff"),
+		fill1:	NewColor("#ffffff"),
+		fill2:	NewColor("#ffffff"),
+		fg:		NewColor("#ffffff"),
+		fg_alt:	NewColor("#ffffff"),
+	}
+}
+
+// DefaultPallet fills a pallet with default values inspired by palenight
+func DefaultPallet() *Pallet {
+	return &Pallet{
+		bg:		NewColor("#292D3E"),
+		bg_alt:	NewColor("#697098"),
+		pri:	NewColor("#c792ea"),
+		sec:	NewColor("#C4E88D"),
+		alert:	NewColor("#ff869a"),
+		cur:	NewColor("#FFCB6B"),
+		fill1:	NewColor("#82b1ff"),
+		fill2:	NewColor("#939ede"),
+		fg:		NewColor("#dde3eb"),
+		fg_alt:	NewColor("#C7D8FF"),
 	}
 }
