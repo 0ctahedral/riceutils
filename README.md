@@ -1,2 +1,2 @@
-# Rice Manager
-This will store colors and call hooks for switching your rice up.
+# Rice Utils
+A collection of programs to assist with ricing and theme switching
