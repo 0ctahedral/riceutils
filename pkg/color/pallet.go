@@ -1,8 +1,5 @@
 package color
 
-import (
-)
-
 // A Pallet is a map of string color names to Colors
 type Pallet struct {
 		bg,
@@ -20,9 +17,9 @@ type Pallet struct {
 // Iter returns a copy of the Pallet in map form for iterating
 func (p *Pallet) Iter() map[string]*Color {
 	return map[string]*Color {
-		"bg":		p.bg,
+		"bg":			p.bg,
 		"bg_alt":	p.bg_alt,
-		"fg":		p.fg,
+		"fg":			p.fg,
 		"fg_alt":	p.fg_alt,
 		"pri":		p.pri,
 		"sec":		p.sec,

@@ -3,7 +3,7 @@
 package term
 
 import (
-	"github.com/xen0ne/riceutils/color"
+	"github.com/xen0ne/riceutils/pkg/color"
 	"fmt"
 	"os"
 )

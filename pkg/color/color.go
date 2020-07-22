@@ -33,7 +33,7 @@ func  RgbString225(c *Color) string {
 	return fmt.Sprintf("%d, %d, %d", c.R, c.G, c.B)
 }
 
-// Rgb returns r, g, and b values of a Color [0-1]
+// Rgb returns red, green, and blue values of a Color [0-1]
 func Rgb(c *Color) (r,g,b float32) {
 	r = float32(c.R ) / 255;
 	g = float32(c.G ) / 255;
@@ -41,9 +41,8 @@ func Rgb(c *Color) (r,g,b float32) {
 	return
 }
 
-// HslString creates a comma separated string of
-// the hue, saturation, and lightness values of the given color
-func HsvString(color *Color) string {
+// Hsv returns the hue, sturation, and value of a given Color
+func Hsv(color *Color) (int, int, int) {
 	// formula from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
 	r, g, b := Rgb(color)
 	var max float32 = 0
@@ -81,13 +80,17 @@ func HsvString(color *Color) string {
 		}
 	}
 
-	//if h < 0 { h = 360 - h }
-
 	s = float32(math.Round(float64(s * 100)))
 	v = float32(math.Round(float64(v * 100)))
 
-	return fmt.Sprintf("%d, %d, %d",
-		int(h), int(s), int(v))
+	return int(h), int(s), int(v)
+}
+
+// HslString creates a comma separated string of
+// the hue, saturation, and lightness values of the given color
+func HsvString(c *Color) string {
+	h, s, v := Hsv(c)
+	return fmt.Sprintf("%d, %d, %d", h, s, v)
 }
 
 // New takes a string hexadecimal color and creates
@@ -98,6 +101,9 @@ func NewColor(cstr string) *Color {
 	clr := make([]uint8, 3)
 
 	for _, l := range cstr {
+		// we can disregard alpha
+		if i == 3 { break }
+
 		if l == '#' {
 			continue
 		}
