@@ -9,9 +9,10 @@ import (
 )
 
 
-// A 256 RGB representation of a color
+// An Hue Saturation Brighness representation of a color
 type Color struct {
-	h, s, v int
+	h int
+	s, v float64
 }
 
 // HexString creates a string of the hexadecimal representation
@@ -25,43 +26,66 @@ func HexString(c *Color) string {
 // red green and blue channels of the given color (from 0.0 to 1
 func  RgbString(c *Color) string {
 	r, g, b := Rgb(c)
-	return fmt.Sprintf("%1.2f, %1.2f, %1.2f",
-		float32(r)/255, float32(g)/225, float32(b)/255)
+	return fmt.Sprintf(
+		"%1.2f, %1.2f, %1.2f",
+		r, g, b)
 }
 
 // RgbString creates a comma separated string of the
-// red green and blue channels of the given color (from 0 to 225)
-func  RgbString225(c *Color) string {
-	r, g, b := Rgb(c)
+// red green and blue channels of the given color (from 0 to 255)
+func  RgbString255(c *Color) string {
+	r, g, b := Rgb255(c)
 	return fmt.Sprintf("%d, %d, %d", r, g, b)
 }
 
 // Rgb returns red, green, and blue values of a Color [0-1]
-func Rgb(col *Color) (int, int, int) {
-	return	0, 0, 0
-	/*
-	var hp float64 = float64(col.h / 60.0)
-	c := float64((col.v/100.0) * (col.s/100.0))
-	x := c * (1 - math.Abs(math.Mod(hp,2.0) - 1.0))
+func Rgb(col *Color) (float64, float64, float64) {
+	h := float64(col.h)
+	v := col.v 
+	c := v * col.s
+	x := c * (1 - math.Abs(math.Mod(h/60.0, 2.0) - 1.0))
+	m := v - c
+
+	var r, g, b float64
 
 	switch {
-	case hp >= 0 && hp <= 1:
-		return 1, 0, 0
+	case h >= 0 && h < 60:
+		r = c; g = x; b =0
+	case h >= 60 && h < 120:
+		r = x; g = c; b = 0
+	case h >= 120 && h < 180:
+		r = 0; g = c; b = x
+	case h >= 180 && h < 240:
+		r = 0; g = x; b = c
+	case h >= 240 && h < 300:
+		r = x; g = 0; b = c
+	default:
+		r = c; g = 0; b = x
 	}
-	return
-	*/
+	return (r + m), (m+g), (b + m)
 }
+
+func Rgb255(c *Color) (int, int, int) {
+	r, g, b := Rgb(c)
+	return int(math.Ceil(r * 100)/100 * 255),
+		int(math.Round(g * 1000)/1000 * 255),
+		int(math.Round(b * 1000)/1000 * 255)
+}
+
+
+
 
 // Hsv returns the hue, sturation, and value of a given Color
 func Hsv(c *Color) (int, int, int) {
 	// formula from https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
-	return c.h, c.s, c.v
+	return c.h, int(math.Round(c.s * 100)), int(math.Round(c.v * 100))
 }
 
 // HslString creates a comma separated string of
 // the hue, saturation, and lightness values of the given color
 func HsvString(c *Color) string {
-	return fmt.Sprintf("%d, %d, %d", c.h, c.s, c.v)
+	h, s, v := Hsv(c)
+	return fmt.Sprintf("%d, %d, %d", h, s, v)
 }
 
 func hex2rgb(hex string) (int, int, int) {
@@ -96,7 +120,7 @@ func hex2rgb(hex string) (int, int, int) {
 	return ret[0], ret[1], ret[2]
 }
 
-func hex2hsv(hex string) (int, int, int) {
+func hex2hsv(hex string) (int, float64, float64) {
 	ir, ig, ib := hex2rgb(hex)
 	r := float64(ir)/255
 	g := float64(ig)/255
@@ -138,12 +162,9 @@ func hex2hsv(hex string) (int, int, int) {
 		}
 	}
 
-	s = math.Round(float64(s * 100))
-	v = math.Round(float64(v * 100))
 
 	return int(math.Round(h)),
-		int(math.Round(s)),
-		int(math.Round(v))
+		math.Round(s * 100)/100, math.Round(v * 100)/100
 }
 
 // New takes a string hexadecimal color and creates

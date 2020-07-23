@@ -3,14 +3,14 @@ package color
 import "testing"
 
 func TestNewColor(t *testing.T) {
-	e := Color{39, 62, 100}
-	a := *NewColor("ffc761")
+	e := Color{24, 1.0, 1.0}
+	a := *NewColor("ff6500")
 
 	if e != a {
 		t.Errorf("got %v expected %v", a, e)
 	}
 }
-/*
+
 func TestHsvString(t *testing.T) {
 	tt := map[string]string {
 		"274, 49, 35": HsvString(NewColor("#462D59")),
@@ -19,39 +19,40 @@ func TestHsvString(t *testing.T) {
 		"0, 0, 0": HsvString(&Color{0, 0, 0}),
 	}
 	for e, a := range tt {
+		if e != a {
+			t.Errorf("got %v expected %v", a, e)
+		}
 	}
 }
 
 func TestRgbString(t *testing.T) {
 	tt := map[string]string {
-		"0.00, 0.00, 0.00": RgbString(&Color{0, 0, 0}),
-		"1.00, 0.00, 0.00": RgbString(&Color{255, 0, 0}),
-		"0.00, 1.00, 0.00": RgbString(&Color{0, 255, 0}),
-		"0.00, 0.00, 1.00": RgbString(&Color{0, 0, 255}),
+		"0.00, 0.00, 0.00": RgbString(NewColor("000000")),
+		"1.00, 0.00, 0.00": RgbString(NewColor("ff0000")),
+		"0.00, 1.00, 0.00": RgbString(NewColor("00ff00")),
+		"0.00, 0.00, 1.00": RgbString(NewColor("0000ff")),
 		"1.00, 0.40, 0.00": RgbString(NewColor("#ff6500")),
 	}
 	for e, a := range tt {
 		if e != a {
-			t.Errorf("go %s expected %s", a, e)
+			t.Errorf("got %s expected %s", a, e)
 		}
 	}
 }
 
-func TestNewColor(t *testing.T) {
-	tt := map[Color]Color {
-		Color{0, 255, 0}: *NewColor("#00ff00"),
-		Color{0, 255, 0}: *NewColor("00ff00"),
-		Color{0, 255, 0}: *NewColor("00Ff00"),
-		Color{0, 255, 0}: *NewColor("00FF00"),
-		Color{0, 255, 0}: *NewColor("#00ff00"),
-		Color{0, 255, 0}: *NewColor("#00Ff00"),
-		Color{0, 255, 0}: *NewColor("#00FF00"),
-		Color{0, 255, 0}: *NewColor("#00FF00ff"),
+func TestRgbString255(t *testing.T) {
+	tt := map[string]string {
+		"0, 0, 0": RgbString255(NewColor("000000")),
+		"255, 0, 0": RgbString255(NewColor("ff0000")),
+		"0, 255, 0": RgbString255(NewColor("00ff00")),
+		"0, 0, 255": RgbString255(NewColor("0000ff")),
+		"204, 207, 51": RgbString255(NewColor("CCCF33")),
+		"the other thing": RgbString(NewColor("CCCF33")),
+		// "225, 101, 0": RgbString255(NewColor("#ff6500")),
 	}
 	for e, a := range tt {
 		if e != a {
-			t.Errorf("go %v expected %v", a, e)
+			t.Errorf("got %s expected %s", a, e)
 		}
 	}
 }
-*/
