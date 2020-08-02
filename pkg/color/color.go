@@ -29,7 +29,7 @@ func  RgbString(c *Color) string {
 
 // RgbString creates a comma separated string of the
 // red green and blue channels of the given color (from 0 to 225)
-func  RgbString225(c *Color) string {
+func  RgbString255(c *Color) string {
 	return fmt.Sprintf("%d, %d, %d", c.R, c.G, c.B)
 }
 
