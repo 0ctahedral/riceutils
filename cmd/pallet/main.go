@@ -10,8 +10,6 @@ import (
 
 var args = make(map[string]*string)
 
-const default_path = "$HOME/code/riceutils/example/"
-
 func arginit() {
 	args["x"] = flag.String("hex", "", "")
 	flag.StringVar(args["x"], "x", "", "")
@@ -51,6 +49,12 @@ func main() {
 		os.Exit(0)
 	}
 
+	if len(os.Args) == 2 {
+		p := PalletFromFile()
+		fmt.Printf("%s", term.EscPallet(p, term.Stdmap))
+		os.Exit(0)
+	}
+
 	if *args["x"] != "" {
 		if (*args["x"] == "-" || *args["x"] == "--") {
 			PrintPallet(color.HexString)
@@ -79,6 +83,24 @@ func main() {
 	}
 }
 
+func PalletFromFile() *color.Pallet {
+	path := os.Getenv("PALLET_PATH")
+	fp := os.ExpandEnv(fmt.Sprintf("%s%s", path, flag.Args()[0]))
+	f, err := os.Open(fp)
+	if err != nil {
+		//fmt.Printf("file %s does not exist")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	p, err := color.ParseReader(f)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	return p
+}
+
 func PrintPallet(a func(*color.Color) string) {
 	var p *color.Pallet
 
@@ -86,7 +108,7 @@ func PrintPallet(a func(*color.Color) string) {
 		p = color.DefaultPallet()
 	} else {
 		// read the pallet from file
-		p = color.CleanPallet()
+		p = PalletFromFile()
 	}
 
 
@@ -102,18 +124,7 @@ func PrintColorFromPallet(str string, a func(*color.Color) string) {
 	if len(flag.Args()) == 0 {
 		p = color.DefaultPallet()
 	} else {
-		fp := os.ExpandEnv(fmt.Sprintf("%s%s", default_path, flag.Args()[0]))
-		f, err := os.Open(fp)
-		if err != nil {
-			//fmt.Printf("file %s does not exist")
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		p, err = color.PalletFrom(f)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		p = PalletFromFile()
 	}
 
 	if c, ok := p.Iter()[str]; ok {

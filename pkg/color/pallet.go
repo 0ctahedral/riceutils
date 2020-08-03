@@ -5,7 +5,8 @@ import(
 	"io"
 	"fmt"
 	"regexp"
-	)
+	"errors"
+)
 
 // A Pallet is a map of string color names to Colors
 type Pallet struct {
@@ -35,6 +36,38 @@ func (p *Pallet) Iter() map[string]*Color {
 		"fill1":	p.fill1,
 		"fill2":	p.fill2,
 	}
+}
+
+func (p *Pallet) ChangeColor(str string, c *Color) error {
+	switch str {
+	case "bg":
+		p.bg = c
+	case "bg_alt":
+		p.bg_alt = c
+	case "fg":
+		p.fg = c
+	case "fg_alt":
+		p.fg_alt = c
+	case "pri", "primary":
+		p.pri = c
+	case "sec", "secondary":
+		p.sec = c
+	case "alert":
+		p.alert = c
+	case "cur", "cursor":
+		p.cur = c
+	case "fill1":
+		p.fill1 = c
+	case "fill2":
+		p.fill2 = c
+	case "fill":
+		p.fill1 = c
+		p.fill2 = c
+	default:
+		return errors.New(fmt.Sprintf("Invalid color name: %s", str))
+	}
+
+	return nil
 }
 
 // CleanPallet fills a pallet with white values
@@ -69,16 +102,20 @@ func DefaultPallet() *Pallet {
 	}
 }
 
-func ParseReader(r io.Reader) *Pallet {
+func ParseReader(r io.Reader) (*Pallet, error) {
 	// test if regex works
 	reg := regexp.MustCompile(`^(\w+)[[:space:]]*:.*\"*(#\w+)\"*$`)
 	s := bufio.NewScanner(r)
+
+	p := CleanPallet()
 	for s.Scan() {
 		m := reg.FindStringSubmatch(s.Text())
 		if len(m) == 3 {
-			fmt.Println(m[1], m[2])
+			if err := p.ChangeColor(m[1], NewColor(m[2])); err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 
-	return nil
+	return p, nil
 }
