@@ -31,8 +31,11 @@ func (p *Pallet) Iter() map[string]*Color {
 		"fg_alt":	p.fg_alt,
 		"pri":		p.pri,
 		"sec":		p.sec,
+		"primary":		p.pri,
+		"secondary":		p.sec,
 		"alert":	p.alert,
 		"cur":		p.cur,
+		"cursor":		p.cur,
 		"fill1":	p.fill1,
 		"fill2":	p.fill2,
 	}

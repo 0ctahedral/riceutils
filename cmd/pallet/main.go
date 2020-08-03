@@ -43,49 +43,54 @@ func main() {
 	
 	flag.Parse()
 
+	var p *color.Pallet
+	if len(flag.Args()) == 0 {
+		p = PalletFromFile("default")
+	} else {
+		p = PalletFromFile(flag.Args()[0])
+	}
+
 	if len(os.Args) == 1 {
-		def := color.DefaultPallet()
-		fmt.Printf("%s", term.EscPallet(def, term.Stdmap))
+		fmt.Printf("%s", term.EscPallet(p, term.Stdmap))
 		os.Exit(0)
 	}
 
 	if len(os.Args) == 2 {
-		p := PalletFromFile()
 		fmt.Printf("%s", term.EscPallet(p, term.Stdmap))
 		os.Exit(0)
 	}
 
 	if *args["x"] != "" {
 		if (*args["x"] == "-" || *args["x"] == "--") {
-			PrintPallet(color.HexString)
+			PrintPallet(p, color.HexString)
 			os.Exit(0)
 		} else {
-			PrintColorFromPallet(*args["x"], color.HexString)
+			PrintColorFromPallet(p, *args["x"], color.HexString)
 		}
 	}
 
 	if *args["r"] != "" {
 		if (*args["r"] == "-" || *args["r"] == "--") {
-			PrintPallet(color.RgbString255)
+			PrintPallet(p, color.RgbString255)
 			os.Exit(0)
 		} else {
-			PrintColorFromPallet(*args["r"], color.RgbString255)
+			PrintColorFromPallet(p, *args["r"], color.RgbString255)
 		}
 	}
 
 	if *args["s"] != "" {
 		if (*args["s"] == "-" || *args["s"] == "--") {
-			PrintPallet(color.HsvString)
+			PrintPallet(p, color.HsvString)
 			os.Exit(0)
 		} else {
-			PrintColorFromPallet(*args["s"], color.HsvString)
+			PrintColorFromPallet(p, *args["s"], color.HsvString)
 		}
 	}
 }
 
-func PalletFromFile() *color.Pallet {
+func PalletFromFile(pname string) *color.Pallet {
 	path := os.Getenv("PALLET_PATH")
-	fp := os.ExpandEnv(fmt.Sprintf("%s%s", path, flag.Args()[0]))
+	fp := os.ExpandEnv(fmt.Sprintf("%s%s", path, pname))
 	f, err := os.Open(fp)
 	if err != nil {
 		//fmt.Printf("file %s does not exist")
@@ -101,32 +106,14 @@ func PalletFromFile() *color.Pallet {
 	return p
 }
 
-func PrintPallet(a func(*color.Color) string) {
-	var p *color.Pallet
-
-	if len(flag.Args()) == 0 {
-		p = color.DefaultPallet()
-	} else {
-		// read the pallet from file
-		p = PalletFromFile()
-	}
-
-
+func PrintPallet(p *color.Pallet, a func(*color.Color) string) {
 	for _, v := range p.Iter() {
 		fmt.Println(a(v))
 	}
 
 }
 
-func PrintColorFromPallet(str string, a func(*color.Color) string) {
-	var p *color.Pallet
-
-	if len(flag.Args()) == 0 {
-		p = color.DefaultPallet()
-	} else {
-		p = PalletFromFile()
-	}
-
+func PrintColorFromPallet(p *color.Pallet, str string, a func(*color.Color) string) {
 	if c, ok := p.Iter()[str]; ok {
 		fmt.Println(a(c))
 		os.Exit(0)
