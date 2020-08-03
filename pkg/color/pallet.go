@@ -1,5 +1,12 @@
 package color
 
+import(
+	"bufio"
+	"io"
+	"fmt"
+	"regexp"
+	)
+
 // A Pallet is a map of string color names to Colors
 type Pallet struct {
 		bg,
@@ -60,4 +67,18 @@ func DefaultPallet() *Pallet {
 		fg:		NewColor("#dde3eb"),
 		fg_alt:	NewColor("#C7D8FF"),
 	}
+}
+
+func ParseReader(r io.Reader) *Pallet {
+	// test if regex works
+	reg := regexp.MustCompile(`^(\w+)[[:space:]]*:.*\"*(#\w+)\"*$`)
+	s := bufio.NewScanner(r)
+	for s.Scan() {
+		m := reg.FindStringSubmatch(s.Text())
+		if len(m) == 3 {
+			fmt.Println(m[1], m[2])
+		}
+	}
+
+	return nil
 }
