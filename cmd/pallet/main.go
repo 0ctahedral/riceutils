@@ -10,7 +10,7 @@ import (
 
 var args = make(map[string]*string)
 
-// var h = flag.Bool("help", false, "help menu")
+const default_path = "$HOME/code/riceutils/example/"
 
 func arginit() {
 	args["x"] = flag.String("hex", "", "")
@@ -39,12 +39,10 @@ by using a -- to supply no arguments will print all colors from the pallet
 	}
 }
 
-
 func main() {
 
 	arginit()
 	
-	// n := flag.Bool("new", false, "name of new pallet")
 	flag.Parse()
 
 	if len(os.Args) == 1 {
@@ -104,7 +102,18 @@ func PrintColorFromPallet(str string, a func(*color.Color) string) {
 	if len(flag.Args()) == 0 {
 		p = color.DefaultPallet()
 	} else {
-		p = color.CleanPallet()
+		fp := os.ExpandEnv(fmt.Sprintf("%s%s", default_path, flag.Args()[0]))
+		f, err := os.Open(fp)
+		if err != nil {
+			//fmt.Printf("file %s does not exist")
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		p, err = color.PalletFrom(f)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 
 	if c, ok := p.Iter()[str]; ok {

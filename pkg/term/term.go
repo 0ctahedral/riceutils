@@ -29,6 +29,21 @@ var Stdmap = map[string][]string {
 	"fg_alt": {"17;", "4;15;"},
 }
 
+/*
+var Ttymap = map[string][]string {
+	"bg": {"11;", "4;0;"},
+	"bg_alt": {"4;8;"},
+	"pri": {"4;1;", "4;9;"},
+	"sec": {"4;2;", "4;10;"},
+	"alert": {"4;3;", "4;11;"},
+	"cur": {"4;4;", "4;12;", "12;"},
+	"fill1": {"4;5;", "4;13;"},
+	"fill2": {"4;6;", "4;14;"},
+	"fg": {"10;", "4;7;"},
+	"fg_alt": {"17;", "4;15;"},
+}
+*/
+
 // EscColor returns the full escape code to change a terminal's property given
 // by p to the color given by c
 func EscColor(c *color.Color, p string) string {
