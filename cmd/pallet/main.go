@@ -17,6 +17,8 @@ func arginit() {
 	flag.StringVar(args["r"], "r", "", "")
 	args["s"] = flag.String("hsv", "", "")
 	flag.StringVar(args["s"], "s", "", "")
+	args["d"] = flag.String("default", "", "")
+	flag.StringVar(args["d"], "d", "", "")
 
 	flag.Usage = func() {
 		use := `usage: pallet [options...] [pallet]
@@ -44,6 +46,25 @@ func main() {
 	
 	flag.Parse()
 
+	if *args["d"] != "" {
+		path := color.PalletPath();
+		og := fmt.Sprintf("%s/%s", path, *args["d"])
+		_, err := os.Stat(og); if os.IsNotExist(err) {
+			fmt.Printf("%s is not a valid pallet\n", og)
+			os.Exit(1)
+		}
+		targ := fmt.Sprintf("%s/default", path)
+		err = os.Remove(targ)
+		if err != nil {
+			fmt.Println(err)
+		}
+		err = os.Symlink(og, targ)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
 	var p *color.Pallet
 	if len(flag.Args()) == 0 {
 		p = color.PalletFromName("default")
@@ -60,6 +81,7 @@ func main() {
 		fmt.Printf("%s", term.EscPallet(p, term.Stdmap))
 		os.Exit(0)
 	}
+
 
 	// args
 	if *args["x"] != "" {
@@ -88,6 +110,7 @@ func main() {
 			PrintColorFromPallet(p, *args["s"], color.HsvString)
 		}
 	}
+
 }
 
 func PrintPallet(p *color.Pallet, a func(*color.Color) string) {

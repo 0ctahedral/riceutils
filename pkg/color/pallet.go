@@ -128,10 +128,8 @@ func ParseReader(r io.Reader) (*Pallet, error) {
 // PalletFromName reads a a pallet from a file in the
 // PALLET_PATH with the same name as pname
 func PalletFromName(pname string) *Pallet {
-	path := os.Getenv("PALLET_PATH")
-	if path == "" {path = "$HOME/.config/pallets/"}
-	fp := os.ExpandEnv(fmt.Sprintf("%s/%s",
-		strings.TrimRight(path, "/"), pname))
+	path := PalletPath()
+	fp := os.ExpandEnv(fmt.Sprintf("%s/%s", path, pname))
 	f, err := os.Open(fp)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cannot find pallet %s\n%s\n",
@@ -146,4 +144,12 @@ func PalletFromName(pname string) *Pallet {
 	}
 
 	return p
+}
+
+// Resolves the pallet path or returns the default
+func PalletPath() string {
+	// TODO: determine if relative path
+	path := os.Getenv("PALLET_PATH")
+	if path == "" {path = "$HOME/.config/pallets/"}
+	return strings.TrimRight(path, "/")
 }
