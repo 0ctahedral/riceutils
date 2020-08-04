@@ -26,6 +26,7 @@ supplying only a pallet will apply the given pallet to the terminal
 
 general options:
 -h | --help prints this message
+-d | --default changes the default to the specified pallet
 
 printing options:
 by using a -- to supply no arguments will print all colors from the pallet
@@ -45,21 +46,22 @@ func main() {
 
 	var p *color.Pallet
 	if len(flag.Args()) == 0 {
-		p = PalletFromFile("default")
+		p = color.PalletFromName("default")
 	} else {
-		p = PalletFromFile(flag.Args()[0])
+		p = color.PalletFromName(flag.Args()[0])
 	}
 
+	// check if there are zero or one arguments
 	if len(os.Args) == 1 {
 		fmt.Printf("%s", term.EscPallet(p, term.Stdmap))
 		os.Exit(0)
 	}
-
 	if len(os.Args) == 2 {
 		fmt.Printf("%s", term.EscPallet(p, term.Stdmap))
 		os.Exit(0)
 	}
 
+	// args
 	if *args["x"] != "" {
 		if (*args["x"] == "-" || *args["x"] == "--") {
 			PrintPallet(p, color.HexString)
@@ -88,29 +90,10 @@ func main() {
 	}
 }
 
-func PalletFromFile(pname string) *color.Pallet {
-	path := os.Getenv("PALLET_PATH")
-	fp := os.ExpandEnv(fmt.Sprintf("%s%s", path, pname))
-	f, err := os.Open(fp)
-	if err != nil {
-		//fmt.Printf("file %s does not exist")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	p, err := color.ParseReader(f)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	return p
-}
-
 func PrintPallet(p *color.Pallet, a func(*color.Color) string) {
 	for _, v := range p.Iter() {
 		fmt.Println(a(v))
 	}
-
 }
 
 func PrintColorFromPallet(p *color.Pallet, str string, a func(*color.Color) string) {

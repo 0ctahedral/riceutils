@@ -3,8 +3,10 @@ package color
 import(
 	"bufio"
 	"io"
+	"os"
 	"fmt"
 	"regexp"
+	"strings"
 	"errors"
 )
 
@@ -121,4 +123,27 @@ func ParseReader(r io.Reader) (*Pallet, error) {
 	}
 
 	return p, nil
+}
+
+// PalletFromName reads a a pallet from a file in the
+// PALLET_PATH with the same name as pname
+func PalletFromName(pname string) *Pallet {
+	path := os.Getenv("PALLET_PATH")
+	if path == "" {path = "$HOME/.config/pallets/"}
+	fp := os.ExpandEnv(fmt.Sprintf("%s/%s",
+		strings.TrimRight(path, "/"), pname))
+	f, err := os.Open(fp)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot find pallet %s\n%s\n",
+			pname, "hint: is it in your PALLT_PATH?")
+		os.Exit(1)
+	}
+
+	p, err := ParseReader(f)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	return p
 }
