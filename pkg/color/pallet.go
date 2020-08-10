@@ -1,45 +1,47 @@
 package color
 
-import(
+import (
 	"bufio"
-	"io"
-	"os"
+	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
-	"errors"
+	"text/template"
 )
 
 // A Pallet is a map of string color names to Colors
 type Pallet struct {
-		bg,
-		bg_alt,
-		fg,
-		fg_alt,
-		pri,
-		sec,
-		alert,
-		cur,
-		fill1,
-		fill2 *Color
+	bg,
+	bg_alt,
+	fg,
+	fg_alt,
+	pri,
+	sec,
+	alert,
+	cur,
+	fill1,
+	fill2 *Color
 }
 
 // Iter returns a copy of the Pallet in map form for iterating
 func (p *Pallet) Iter() map[string]*Color {
-	return map[string]*Color {
-		"bg":			p.bg,
-		"bg_alt":	p.bg_alt,
-		"fg":			p.fg,
-		"fg_alt":	p.fg_alt,
-		"pri":		p.pri,
-		"sec":		p.sec,
-		"primary":		p.pri,
-		"secondary":		p.sec,
-		"alert":	p.alert,
-		"cur":		p.cur,
-		"cursor":		p.cur,
-		"fill1":	p.fill1,
-		"fill2":	p.fill2,
+	return map[string]*Color{
+		"bg":        p.bg,
+		"bg_alt":    p.bg_alt,
+		"fg":        p.fg,
+		"fg_alt":    p.fg_alt,
+		"pri":       p.pri,
+		"sec":       p.sec,
+		"primary":   p.pri,
+		"secondary": p.sec,
+		"alert":     p.alert,
+		"cur":       p.cur,
+		"cursor":    p.cur,
+		"fill1":     p.fill1,
+		"fill2":     p.fill2,
 	}
 }
 
@@ -78,32 +80,32 @@ func (p *Pallet) ChangeColor(str string, c *Color) error {
 // CleanPallet fills a pallet with white values
 func CleanPallet() *Pallet {
 	return &Pallet{
-		bg:		NewColor("#ffffff"),
-		bg_alt:	NewColor("#ffffff"),
-		pri:	NewColor("#ffffff"),
-		sec:	NewColor("#ffffff"),
-		alert:	NewColor("#ffffff"),
-		cur:	NewColor("#ffffff"),
-		fill1:	NewColor("#ffffff"),
-		fill2:	NewColor("#ffffff"),
-		fg:		NewColor("#ffffff"),
-		fg_alt:	NewColor("#ffffff"),
+		bg:     NewColor("#ffffff"),
+		bg_alt: NewColor("#ffffff"),
+		pri:    NewColor("#ffffff"),
+		sec:    NewColor("#ffffff"),
+		alert:  NewColor("#ffffff"),
+		cur:    NewColor("#ffffff"),
+		fill1:  NewColor("#ffffff"),
+		fill2:  NewColor("#ffffff"),
+		fg:     NewColor("#ffffff"),
+		fg_alt: NewColor("#ffffff"),
 	}
 }
 
 // DefaultPallet fills a pallet with default values inspired by palenight
 func DefaultPallet() *Pallet {
 	return &Pallet{
-		bg:		NewColor("#292D3E"),
-		bg_alt:	NewColor("#697098"),
-		pri:	NewColor("#c792ea"),
-		sec:	NewColor("#C4E88D"),
-		alert:	NewColor("#ff869a"),
-		cur:	NewColor("#FFCB6B"),
-		fill1:	NewColor("#82b1ff"),
-		fill2:	NewColor("#939ede"),
-		fg:		NewColor("#dde3eb"),
-		fg_alt:	NewColor("#C7D8FF"),
+		bg:     NewColor("#292D3E"),
+		bg_alt: NewColor("#697098"),
+		pri:    NewColor("#c792ea"),
+		sec:    NewColor("#C4E88D"),
+		alert:  NewColor("#ff869a"),
+		cur:    NewColor("#FFCB6B"),
+		fill1:  NewColor("#82b1ff"),
+		fill2:  NewColor("#939ede"),
+		fg:     NewColor("#dde3eb"),
+		fg_alt: NewColor("#C7D8FF"),
 	}
 }
 
@@ -150,6 +152,34 @@ func PalletFromName(pname string) *Pallet {
 func PalletPath() string {
 	// TODO: determine if relative path
 	path := os.Getenv("PALLET_PATH")
-	if path == "" {path = "$HOME/.config/pallets/"}
+	if path == "" {
+		path = "$HOME/.config/pallets/"
+	}
 	return strings.TrimRight(path, "/")
+}
+
+// ApplyPallet reads a template from a reader, applies the given pallet to it
+// and then writes the filled in template to the writer.
+func ApplyPallet(r io.Reader, p *Pallet, w io.Writer) error {
+
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+
+	funcs := template.FuncMap{
+		"hex":    HexString,
+		"rgb":    RgbString,
+		"rgb225": RgbString255,
+		"hsv":    HsvString,
+	}
+
+	tmpl := template.Must(template.New("test").Funcs(funcs).Parse(string(b)))
+
+	err = tmpl.Execute(w, p.Iter())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

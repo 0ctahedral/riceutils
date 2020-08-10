@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"flag"
-	"os"
+	"fmt"
 	"github.com/xen0ne/riceutils/pkg/color"
 	"github.com/xen0ne/riceutils/pkg/term"
+	"os"
 )
 
 var args = make(map[string]*string)
@@ -43,13 +43,14 @@ by using a -- to supply no arguments will print all colors from the pallet
 func main() {
 
 	arginit()
-	
+
 	flag.Parse()
 
 	if *args["d"] != "" {
-		path := color.PalletPath();
+		path := color.PalletPath()
 		og := fmt.Sprintf("%s/%s", path, *args["d"])
-		_, err := os.Stat(og); if os.IsNotExist(err) {
+		_, err := os.Stat(og)
+		if os.IsNotExist(err) {
 			fmt.Printf("%s is not a valid pallet\n", og)
 			os.Exit(1)
 		}
@@ -82,10 +83,9 @@ func main() {
 		os.Exit(0)
 	}
 
-
 	// args
 	if *args["x"] != "" {
-		if (*args["x"] == "-" || *args["x"] == "--") {
+		if *args["x"] == "-" || *args["x"] == "--" {
 			PrintPallet(p, color.HexString)
 			os.Exit(0)
 		} else {
@@ -94,7 +94,7 @@ func main() {
 	}
 
 	if *args["r"] != "" {
-		if (*args["r"] == "-" || *args["r"] == "--") {
+		if *args["r"] == "-" || *args["r"] == "--" {
 			PrintPallet(p, color.RgbString255)
 			os.Exit(0)
 		} else {
@@ -103,7 +103,7 @@ func main() {
 	}
 
 	if *args["s"] != "" {
-		if (*args["s"] == "-" || *args["s"] == "--") {
+		if *args["s"] == "-" || *args["s"] == "--" {
 			PrintPallet(p, color.HsvString)
 			os.Exit(0)
 		} else {
