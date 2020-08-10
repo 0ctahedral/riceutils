@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -12,35 +13,58 @@ var (
 	pal  *color.Pallet
 	from io.Reader
 	to   io.Writer
+	p    *string
 )
 
-func main() {
-	// how many arguments are there?
-	// 0 read from stdin
-	// 1 read pallet from file name output to stdout
-	// 2 read pallet from file and output to second file
+func init() {
+	p = flag.String("pallet", "", "")
+	flag.StringVar(p, "p", "", "")
+}
 
-	switch len(os.Args) {
-	case 1:
+func main() {
+	flag.Parse()
+
+	switch len(flag.Args()) {
+	case 0:
 		from = os.Stdin
 		to = os.Stdout
-	case 2:
+	case 1:
 		var err error
-		from, err = os.Open(os.Args[1])
+		from, err = os.Open(flag.Arg(0))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 		to = os.Stdout
+	case 2:
+		var err error
+		from, err = os.Open(flag.Arg(0))
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		// open/create other file
+		to, err = os.OpenFile(flag.Arg(1), os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	default:
+		fmt.Print("this is run")
 		from = os.Stdin
 		to = os.Stdout
 	}
 
-	simp := color.CleanPallet()
+	var pal *color.Pallet
+	if *p != "" {
+		// pallet from file
+		pal = color.PalletFromName(*p)
+	} else {
+		pal = color.PalletFromName("default")
+	}
 
 	err := color.ApplyPallet(from,
-		simp, to)
+		pal, to)
 	if err != nil {
 		fmt.Println(err)
 	}
