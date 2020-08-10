@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/xen0ne/riceutils/pkg/color"
-	"github.com/xen0ne/riceutils/pkg/term"
 	"os"
+
+	"github.com/xen0ne/riceutils/pkg/color"
+	"github.com/xen0ne/riceutils/pkg/pallet"
+	"github.com/xen0ne/riceutils/pkg/term"
 )
 
 var args = make(map[string]*string)
@@ -47,7 +49,7 @@ func main() {
 	flag.Parse()
 
 	if *args["d"] != "" {
-		path := color.PalletPath()
+		path := pallet.PalletPath()
 		og := fmt.Sprintf("%s/%s", path, *args["d"])
 		_, err := os.Stat(og)
 		if os.IsNotExist(err) {
@@ -66,11 +68,11 @@ func main() {
 		}
 	}
 
-	var p *color.Pallet
+	var p *pallet.Pallet
 	if len(flag.Args()) == 0 {
-		p = color.PalletFromName("default")
+		p = pallet.PalletFromName("default")
 	} else {
-		p = color.PalletFromName(flag.Args()[0])
+		p = pallet.PalletFromName(flag.Args()[0])
 	}
 
 	// check if there are zero or one arguments
@@ -113,13 +115,13 @@ func main() {
 
 }
 
-func PrintPallet(p *color.Pallet, a func(*color.Color) string) {
+func PrintPallet(p *pallet.Pallet, a func(*color.Color) string) {
 	for _, v := range p.Iter() {
 		fmt.Println(a(v))
 	}
 }
 
-func PrintColorFromPallet(p *color.Pallet, str string, a func(*color.Color) string) {
+func PrintColorFromPallet(p *pallet.Pallet, str string, a func(*color.Color) string) {
 	if c, ok := p.Iter()[str]; ok {
 		fmt.Println(a(c))
 		os.Exit(0)

@@ -6,11 +6,11 @@ import (
 	"io"
 	"os"
 
-	"github.com/xen0ne/riceutils/pkg/color"
+	"github.com/xen0ne/riceutils/pkg/pallet"
 )
 
 var (
-	pal  *color.Pallet
+	pal  *pallet.Pallet
 	from io.Reader
 	to   io.Writer
 	p    *string
@@ -55,15 +55,15 @@ func main() {
 		to = os.Stdout
 	}
 
-	var pal *color.Pallet
+	var pal *pallet.Pallet
 	if *p != "" {
 		// pallet from file
-		pal = color.PalletFromName(*p)
+		pal = pallet.PalletFromName(*p)
 	} else {
-		pal = color.PalletFromName("default")
+		pal = pallet.PalletFromName("default")
 	}
 
-	err := color.ApplyPallet(from,
+	err := pallet.ApplyPallet(from,
 		pal, to)
 	if err != nil {
 		fmt.Println(err)

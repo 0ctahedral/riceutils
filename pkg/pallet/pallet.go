@@ -1,4 +1,4 @@
-package color
+package pallet
 
 import (
 	"bufio"
@@ -10,9 +10,11 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/xen0ne/riceutils/pkg/color"
 )
 
-// A Pallet is a map of string color names to Colors
+// A Pallet is a map of string color names to color.Colors
 type Pallet struct {
 	bg,
 	bg_alt,
@@ -23,12 +25,12 @@ type Pallet struct {
 	alert,
 	cur,
 	fill1,
-	fill2 *Color
+	fill2 *color.Color
 }
 
 // Iter returns a copy of the Pallet in map form for iterating
-func (p *Pallet) Iter() map[string]*Color {
-	return map[string]*Color{
+func (p *Pallet) Iter() map[string]*color.Color {
+	return map[string]*color.Color{
 		"bg":        p.bg,
 		"bg_alt":    p.bg_alt,
 		"fg":        p.fg,
@@ -45,7 +47,7 @@ func (p *Pallet) Iter() map[string]*Color {
 	}
 }
 
-func (p *Pallet) ChangeColor(str string, c *Color) error {
+func (p *Pallet) ChangeColor(str string, c *color.Color) error {
 	switch str {
 	case "bg":
 		p.bg = c
@@ -80,32 +82,32 @@ func (p *Pallet) ChangeColor(str string, c *Color) error {
 // CleanPallet fills a pallet with white values
 func CleanPallet() *Pallet {
 	return &Pallet{
-		bg:     NewColor("#ffffff"),
-		bg_alt: NewColor("#ffffff"),
-		pri:    NewColor("#ffffff"),
-		sec:    NewColor("#ffffff"),
-		alert:  NewColor("#ffffff"),
-		cur:    NewColor("#ffffff"),
-		fill1:  NewColor("#ffffff"),
-		fill2:  NewColor("#ffffff"),
-		fg:     NewColor("#ffffff"),
-		fg_alt: NewColor("#ffffff"),
+		bg:     color.NewColor("#ffffff"),
+		bg_alt: color.NewColor("#ffffff"),
+		pri:    color.NewColor("#ffffff"),
+		sec:    color.NewColor("#ffffff"),
+		alert:  color.NewColor("#ffffff"),
+		cur:    color.NewColor("#ffffff"),
+		fill1:  color.NewColor("#ffffff"),
+		fill2:  color.NewColor("#ffffff"),
+		fg:     color.NewColor("#ffffff"),
+		fg_alt: color.NewColor("#ffffff"),
 	}
 }
 
 // DefaultPallet fills a pallet with default values inspired by palenight
 func DefaultPallet() *Pallet {
 	return &Pallet{
-		bg:     NewColor("#292D3E"),
-		bg_alt: NewColor("#697098"),
-		pri:    NewColor("#c792ea"),
-		sec:    NewColor("#C4E88D"),
-		alert:  NewColor("#ff869a"),
-		cur:    NewColor("#FFCB6B"),
-		fill1:  NewColor("#82b1ff"),
-		fill2:  NewColor("#939ede"),
-		fg:     NewColor("#dde3eb"),
-		fg_alt: NewColor("#C7D8FF"),
+		bg:     color.NewColor("#292D3E"),
+		bg_alt: color.NewColor("#697098"),
+		pri:    color.NewColor("#c792ea"),
+		sec:    color.NewColor("#C4E88D"),
+		alert:  color.NewColor("#ff869a"),
+		cur:    color.NewColor("#FFCB6B"),
+		fill1:  color.NewColor("#82b1ff"),
+		fill2:  color.NewColor("#939ede"),
+		fg:     color.NewColor("#dde3eb"),
+		fg_alt: color.NewColor("#C7D8FF"),
 	}
 }
 
@@ -118,7 +120,7 @@ func ParseReader(r io.Reader) (*Pallet, error) {
 	for s.Scan() {
 		m := reg.FindStringSubmatch(s.Text())
 		if len(m) == 3 {
-			if err := p.ChangeColor(m[1], NewColor(m[2])); err != nil {
+			if err := p.ChangeColor(m[1], color.NewColor(m[2])); err != nil {
 				fmt.Println(err)
 			}
 		}
@@ -168,10 +170,10 @@ func ApplyPallet(r io.Reader, p *Pallet, w io.Writer) error {
 	}
 
 	funcs := template.FuncMap{
-		"hex":    HexString,
-		"rgb":    RgbString,
-		"rgb225": RgbString255,
-		"hsv":    HsvString,
+		"hex":    color.HexString,
+		"rgb":    color.RgbString,
+		"rgb225": color.RgbString255,
+		"hsv":    color.HsvString,
 	}
 
 	tmpl := template.Must(template.New("test").Funcs(funcs).Parse(string(b)))

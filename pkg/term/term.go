@@ -3,29 +3,31 @@
 package term
 
 import (
-	"github.com/xen0ne/riceutils/pkg/color"
 	"fmt"
 	"os"
+
+	"github.com/xen0ne/riceutils/pkg/color"
+	"github.com/xen0ne/riceutils/pkg/pallet"
 )
 
 // the escape codes needed for terminal stuff
 const (
-	tesc = "\033Ptmux;\033\033]"
-	tcesc ="\007\033\\"
-	esc = "\033]"
-	cesc = "\007"
+	tesc  = "\033Ptmux;\033\033]"
+	tcesc = "\007\033\\"
+	esc   = "\033]"
+	cesc  = "\007"
 )
 
-var Stdmap = map[string][]string {
-	"bg": {"11;", "4;0;"},
+var Stdmap = map[string][]string{
+	"bg":     {"11;", "4;0;"},
 	"bg_alt": {"4;8;"},
-	"pri": {"4;1;", "4;9;"},
-	"sec": {"4;2;", "4;10;"},
-	"alert": {"4;3;", "4;11;"},
-	"cur": {"4;4;", "4;12;", "12;"},
-	"fill1": {"4;5;", "4;13;"},
-	"fill2": {"4;6;", "4;14;"},
-	"fg": {"10;", "4;7;"},
+	"pri":    {"4;1;", "4;9;"},
+	"sec":    {"4;2;", "4;10;"},
+	"alert":  {"4;3;", "4;11;"},
+	"cur":    {"4;4;", "4;12;", "12;"},
+	"fill1":  {"4;5;", "4;13;"},
+	"fill2":  {"4;6;", "4;14;"},
+	"fg":     {"10;", "4;7;"},
 	"fg_alt": {"17;", "4;15;"},
 }
 
@@ -54,12 +56,12 @@ func EscColor(c *color.Color, p string) string {
 		oe = tesc
 		ce = tcesc
 	}
-    return fmt.Sprintf("%s%s%s%s\n", oe, p, color.HexString(c), ce)
+	return fmt.Sprintf("%s%s%s%s\n", oe, p, color.HexString(c), ce)
 }
 
 // EscPallet returns the escape codes for all the colors in a Pallet p
 // based upon those provided by the map m
-func EscPallet(p *color.Pallet, m map[string][]string) string {
+func EscPallet(p *pallet.Pallet, m map[string][]string) string {
 	var ret string
 	for k, c := range p.Iter() {
 		if escs, ok := m[k]; ok {
@@ -74,6 +76,6 @@ func EscPallet(p *color.Pallet, m map[string][]string) string {
 }
 
 // PalletBlock prints a nice pallet for ya
-func PalletBlock(p *color.Pallet) string {
+func PalletBlock(p *pallet.Pallet) string {
 	return ""
 }
