@@ -2,7 +2,6 @@ package pallet
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,64 +15,21 @@ import (
 
 // A Pallet is a map of string color names to color.Colors
 type Pallet struct {
-	bg,
-	bg_alt,
-	fg,
-	fg_alt,
-	pri,
-	sec,
-	alert,
-	cur,
-	fill1,
-	fill2 *color.Color
+	cmap map[string]*color.Color
 }
 
-// Iter returns a copy of the Pallet in map form for iterating
-func (p *Pallet) Iter() map[string]*color.Color {
-	return map[string]*color.Color{
-		"bg":        p.bg,
-		"bg_alt":    p.bg_alt,
-		"fg":        p.fg,
-		"fg_alt":    p.fg_alt,
-		"pri":       p.pri,
-		"sec":       p.sec,
-		"primary":   p.pri,
-		"secondary": p.sec,
-		"alert":     p.alert,
-		"cur":       p.cur,
-		"cursor":    p.cur,
-		"fill1":     p.fill1,
-		"fill2":     p.fill2,
-	}
+// Map returns a copy of the Pallet in map form for iterating
+func (p *Pallet) Map() map[string]*color.Color {
+	return p.cmap
 }
 
+// ChangeColor changes a color if it exists and returns an error otherwise
 func (p *Pallet) ChangeColor(str string, c *color.Color) error {
-	switch str {
-	case "bg":
-		p.bg = c
-	case "bg_alt":
-		p.bg_alt = c
-	case "fg":
-		p.fg = c
-	case "fg_alt":
-		p.fg_alt = c
-	case "pri", "primary":
-		p.pri = c
-	case "sec", "secondary":
-		p.sec = c
-	case "alert":
-		p.alert = c
-	case "cur", "cursor":
-		p.cur = c
-	case "fill1":
-		p.fill1 = c
-	case "fill2":
-		p.fill2 = c
-	case "fill":
-		p.fill1 = c
-		p.fill2 = c
-	default:
-		return errors.New(fmt.Sprintf("Invalid color name: %s", str))
+	// check if the color exists
+	if _, ok := p.cmap[str]; ok {
+
+	} else {
+		return fmt.Errorf("Invalid color name: %s", str)
 	}
 
 	return nil
@@ -82,32 +38,36 @@ func (p *Pallet) ChangeColor(str string, c *color.Color) error {
 // CleanPallet fills a pallet with white values
 func CleanPallet() *Pallet {
 	return &Pallet{
-		bg:     color.NewColor("#ffffff"),
-		bg_alt: color.NewColor("#ffffff"),
-		pri:    color.NewColor("#ffffff"),
-		sec:    color.NewColor("#ffffff"),
-		alert:  color.NewColor("#ffffff"),
-		cur:    color.NewColor("#ffffff"),
-		fill1:  color.NewColor("#ffffff"),
-		fill2:  color.NewColor("#ffffff"),
-		fg:     color.NewColor("#ffffff"),
-		fg_alt: color.NewColor("#ffffff"),
+		cmap: map[string]*color.Color{
+			"bg":    color.NewColor("#ffffff"),
+			"bg+":   color.NewColor("#ffffff"),
+			"pri":   color.NewColor("#ffffff"),
+			"sec":   color.NewColor("#ffffff"),
+			"alert": color.NewColor("#ffffff"),
+			"cur":   color.NewColor("#ffffff"),
+			"fill1": color.NewColor("#ffffff"),
+			"fill2": color.NewColor("#ffffff"),
+			"fg":    color.NewColor("#ffffff"),
+			"fg+":   color.NewColor("#ffffff"),
+		},
 	}
 }
 
 // DefaultPallet fills a pallet with default values inspired by palenight
 func DefaultPallet() *Pallet {
 	return &Pallet{
-		bg:     color.NewColor("#292D3E"),
-		bg_alt: color.NewColor("#697098"),
-		pri:    color.NewColor("#c792ea"),
-		sec:    color.NewColor("#C4E88D"),
-		alert:  color.NewColor("#ff869a"),
-		cur:    color.NewColor("#FFCB6B"),
-		fill1:  color.NewColor("#82b1ff"),
-		fill2:  color.NewColor("#939ede"),
-		fg:     color.NewColor("#dde3eb"),
-		fg_alt: color.NewColor("#C7D8FF"),
+		cmap: map[string]*color.Color{
+			"bg":    color.NewColor("#292D3E"),
+			"bg+":   color.NewColor("#697098"),
+			"pri":   color.NewColor("#c792ea"),
+			"sec":   color.NewColor("#C4E88D"),
+			"alert": color.NewColor("#ff869a"),
+			"cur":   color.NewColor("#FFCB6B"),
+			"fill1": color.NewColor("#82b1ff"),
+			"fill2": color.NewColor("#939ede"),
+			"fg":    color.NewColor("#dde3eb"),
+			"fg+":   color.NewColor("#C7D8FF"),
+		},
 	}
 }
 
@@ -138,7 +98,9 @@ func PalletFromName(pname string) *Pallet {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cannot find pallet %s\n%s\n",
 			pname, "hint: is it in your PALLT_PATH?")
-		os.Exit(1)
+		// os.Exit(1)
+		fmt.Fprintf(os.Stderr, "resorting to default pallet\n")
+		return DefaultPallet()
 	}
 
 	p, err := ParseReader(f)
@@ -176,9 +138,13 @@ func ApplyPallet(r io.Reader, p *Pallet, w io.Writer) error {
 		"hsv":    color.HsvString,
 	}
 
-	tmpl := template.Must(template.New("test").Funcs(funcs).Parse(string(b)))
+	tmpl, err := template.New("test").Funcs(funcs).Parse(string(b))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		os.Exit(1)
+	}
 
-	err = tmpl.Execute(w, p.Iter())
+	err = tmpl.Execute(w, p.Map())
 	if err != nil {
 		return err
 	}

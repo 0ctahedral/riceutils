@@ -116,13 +116,13 @@ func main() {
 }
 
 func PrintPallet(p *pallet.Pallet, a func(*color.Color) string) {
-	for _, v := range p.Iter() {
+	for _, v := range p.Map() {
 		fmt.Println(a(v))
 	}
 }
 
 func PrintColorFromPallet(p *pallet.Pallet, str string, a func(*color.Color) string) {
-	if c, ok := p.Iter()[str]; ok {
+	if c, ok := p.Map()[str]; ok {
 		fmt.Println(a(c))
 		os.Exit(0)
 	}
