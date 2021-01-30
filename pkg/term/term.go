@@ -63,7 +63,7 @@ func EscColor(c *color.Color, p string) string {
 // based upon those provided by the map m
 func EscPallet(p *pallet.Pallet, m map[string][]string) string {
 	var ret string
-	for k, c := range p.Iter() {
+	for k, c := range p.Map() {
 		if escs, ok := m[k]; ok {
 			for _, e := range escs {
 				ret += EscColor(c, e)

@@ -12,8 +12,8 @@ import (
 var (
 	pal  *pallet.Pallet
 	from io.Reader
-	to   io.Writer
-	p    *string
+	// to   io.Writer
+	p *string
 )
 
 func init() {
@@ -24,35 +24,30 @@ func init() {
 func main() {
 	flag.Parse()
 
-	switch len(flag.Args()) {
-	case 0:
+	// check for stdin
+	inStat, err := os.Stdin.Stat()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "could not open stdin because: %s\n", err.Error())
+		os.Exit(1)
+	}
+
+	// check if there is data actually piped in
+	if inStat.Mode()&os.ModeCharDevice == 0 {
 		from = os.Stdin
-		to = os.Stdout
-	case 1:
-		var err error
-		from, err = os.Open(flag.Arg(0))
-		if err != nil {
-			fmt.Println(err)
+	} else {
+		// check for argument
+		if len(flag.Args()) == 0 {
+			fmt.Fprintln(os.Stderr, "no template file specified")
 			os.Exit(1)
 		}
-		to = os.Stdout
-	case 2:
-		var err error
-		from, err = os.Open(flag.Arg(0))
+		// open the first file for now
+		f, err := os.Open(flag.Arg(0))
 		if err != nil {
-			fmt.Println(err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		// open/create other file
-		to, err = os.OpenFile(flag.Arg(1), os.O_CREATE|os.O_WRONLY, 0755)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-	default:
-		fmt.Print("this is run")
-		from = os.Stdin
-		to = os.Stdout
+		defer f.Close()
+		from = io.Reader(f)
 	}
 
 	var pal *pallet.Pallet
@@ -63,8 +58,8 @@ func main() {
 		pal = pallet.PalletFromName("default")
 	}
 
-	err := pallet.ApplyPallet(from,
-		pal, to)
+	err = pallet.ApplyPallet(from,
+		pal, os.Stdout)
 	if err != nil {
 		fmt.Println(err)
 	}

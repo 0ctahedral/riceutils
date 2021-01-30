@@ -8,10 +8,14 @@ import (
 	"strconv"
 )
 
-
 // A 256 RGB representation of a color
 type Color struct {
 	R, G, B uint8
+}
+
+// String to make it default to hex
+func (c *Color) String() string {
+	return HexString(c)
 }
 
 // HexString creates a string of the hexadecimal representation
@@ -22,22 +26,22 @@ func HexString(c *Color) string {
 
 // RgbString creates a comma separated string of the
 // red green and blue channels of the given color (from 0.0 to 1
-func  RgbString(c *Color) string {
+func RgbString(c *Color) string {
 	r, g, b := Rgb(c)
 	return fmt.Sprintf("%1.2f, %1.2f, %1.2f", r, g, b)
 }
 
 // RgbString creates a comma separated string of the
 // red green and blue channels of the given color (from 0 to 225)
-func  RgbString255(c *Color) string {
+func RgbString255(c *Color) string {
 	return fmt.Sprintf("%d, %d, %d", c.R, c.G, c.B)
 }
 
 // Rgb returns red, green, and blue values of a Color [0-1]
-func Rgb(c *Color) (r,g,b float32) {
-	r = float32(c.R ) / 255;
-	g = float32(c.G ) / 255;
-	b = float32(c.B ) / 255;
+func Rgb(c *Color) (r, g, b float32) {
+	r = float32(c.R) / 255
+	g = float32(c.G) / 255
+	b = float32(c.B) / 255
 	return
 }
 
@@ -48,10 +52,13 @@ func Hsv(color *Color) (int, int, int) {
 	var max float32 = 0
 	var min float32 = 1
 	for _, f := range []float32{r, g, b} {
-		if (f > max ) {max = f}
-		if (f < min ) {min = f}
+		if f > max {
+			max = f
+		}
+		if f < min {
+			min = f
+		}
 	}
-
 
 	c := max - min
 	v := max
@@ -59,7 +66,7 @@ func Hsv(color *Color) (int, int, int) {
 	if v == 0 {
 		s = 0
 	} else {
-		s = c/v
+		s = c / v
 	}
 
 	var h float32
@@ -68,7 +75,7 @@ func Hsv(color *Color) (int, int, int) {
 	} else {
 		switch v {
 		case r:
-			h = 60 * (g-b)/c
+			h = 60 * (g - b) / c
 		case g:
 			h = 60 * (2 + (b-r)/c)
 		case b:
@@ -102,7 +109,9 @@ func NewColor(cstr string) *Color {
 
 	for _, l := range cstr {
 		// we can disregard alpha
-		if i == 3 { break }
+		if i == 3 {
+			break
+		}
 
 		if l == '#' {
 			continue
@@ -125,4 +134,3 @@ func NewColor(cstr string) *Color {
 	}
 	return &Color{clr[0], clr[1], clr[2]}
 }
-

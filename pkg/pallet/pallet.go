@@ -69,9 +69,6 @@ func (p *Pallet) ChangeColor(str string, c *color.Color) error {
 		p.com = c
 	case "block":
 		p.block = c
-	case "fill":
-		p.com = c
-		p.block = c
 	default:
 		return errors.New(fmt.Sprintf("Invalid color name: %s", str))
 	}
