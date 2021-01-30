@@ -24,8 +24,8 @@ type Pallet struct {
 	sec,
 	alert,
 	cur,
-	fill1,
-	fill2 *color.Color
+	com,
+	block *color.Color
 }
 
 // Iter returns a copy of the Pallet in map form for iterating
@@ -42,8 +42,8 @@ func (p *Pallet) Iter() map[string]*color.Color {
 		"alert":     p.alert,
 		"cur":       p.cur,
 		"cursor":    p.cur,
-		"fill1":     p.fill1,
-		"fill2":     p.fill2,
+		"com":     p.com,
+		"block":     p.block,
 	}
 }
 
@@ -65,13 +65,13 @@ func (p *Pallet) ChangeColor(str string, c *color.Color) error {
 		p.alert = c
 	case "cur", "cursor":
 		p.cur = c
-	case "fill1":
-		p.fill1 = c
-	case "fill2":
-		p.fill2 = c
+	case "com":
+		p.com = c
+	case "block":
+		p.block = c
 	case "fill":
-		p.fill1 = c
-		p.fill2 = c
+		p.com = c
+		p.block = c
 	default:
 		return errors.New(fmt.Sprintf("Invalid color name: %s", str))
 	}
@@ -88,8 +88,8 @@ func CleanPallet() *Pallet {
 		sec:    color.NewColor("#ffffff"),
 		alert:  color.NewColor("#ffffff"),
 		cur:    color.NewColor("#ffffff"),
-		fill1:  color.NewColor("#ffffff"),
-		fill2:  color.NewColor("#ffffff"),
+		com:  color.NewColor("#ffffff"),
+		block:  color.NewColor("#ffffff"),
 		fg:     color.NewColor("#ffffff"),
 		fg_alt: color.NewColor("#ffffff"),
 	}
@@ -104,8 +104,8 @@ func DefaultPallet() *Pallet {
 		sec:    color.NewColor("#C4E88D"),
 		alert:  color.NewColor("#ff869a"),
 		cur:    color.NewColor("#FFCB6B"),
-		fill1:  color.NewColor("#82b1ff"),
-		fill2:  color.NewColor("#939ede"),
+		com:  color.NewColor("#82b1ff"),
+		block:  color.NewColor("#939ede"),
 		fg:     color.NewColor("#dde3eb"),
 		fg_alt: color.NewColor("#C7D8FF"),
 	}

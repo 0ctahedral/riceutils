@@ -88,40 +88,40 @@ func main() {
 	// args
 	if *args["x"] != "" {
 		if *args["x"] == "-" || *args["x"] == "--" {
-			PrintPallet(p, color.HexString)
+			printPallet(p, color.HexString)
 			os.Exit(0)
 		} else {
-			PrintColorFromPallet(p, *args["x"], color.HexString)
+			printColorFromPallet(p, *args["x"], color.HexString)
 		}
 	}
 
 	if *args["r"] != "" {
 		if *args["r"] == "-" || *args["r"] == "--" {
-			PrintPallet(p, color.RgbString255)
+			printPallet(p, color.RgbString255)
 			os.Exit(0)
 		} else {
-			PrintColorFromPallet(p, *args["r"], color.RgbString255)
+			printColorFromPallet(p, *args["r"], color.RgbString255)
 		}
 	}
 
 	if *args["s"] != "" {
 		if *args["s"] == "-" || *args["s"] == "--" {
-			PrintPallet(p, color.HsvString)
+			printPallet(p, color.HsvString)
 			os.Exit(0)
 		} else {
-			PrintColorFromPallet(p, *args["s"], color.HsvString)
+			printColorFromPallet(p, *args["s"], color.HsvString)
 		}
 	}
 
 }
 
-func PrintPallet(p *pallet.Pallet, a func(*color.Color) string) {
+func printPallet(p *pallet.Pallet, a func(*color.Color) string) {
 	for _, v := range p.Iter() {
 		fmt.Println(a(v))
 	}
 }
 
-func PrintColorFromPallet(p *pallet.Pallet, str string, a func(*color.Color) string) {
+func printColorFromPallet(p *pallet.Pallet, str string, a func(*color.Color) string) {
 	if c, ok := p.Iter()[str]; ok {
 		fmt.Println(a(c))
 		os.Exit(0)
